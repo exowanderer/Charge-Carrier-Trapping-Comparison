@@ -5,7 +5,7 @@
 # 
 # CCT = Charge Carrier Trapping - This is a test of comparing the Zhou et al 2017 results with a data driven analysis using multinest
 
-# In[1]:
+# In[ ]:
 
 get_ipython().magic('matplotlib inline')
 from pylab  import *;ion()
@@ -16,7 +16,7 @@ from exoparams import PlanetParams
 from astropy import units as u
 
 
-# In[2]:
+# In[ ]:
 
 test_data = read_csv('test_data.dat')
 test_data
@@ -24,7 +24,7 @@ test_data
 
 # **Check if the data makes sense as is**
 
-# In[3]:
+# In[ ]:
 
 fig = figure(figsize=(10,10))
 errorbar(test_data['DeltaPhase'], test_data['Flux'] , test_data['Sigma'], fmt='o')
@@ -35,14 +35,14 @@ errorbar(np.arange(test_data['DeltaPhase'].size), test_data['Flux'] , test_data[
 # errorbar(w67_v1_orbitPhased['DeltaPhase'], w67_v1_orbitPhased['Flux'] , w67_v1_orbitPhased['Sigma'], fmt='o')
 
 
-# In[4]:
+# In[ ]:
 
 for k in test_data['OrbitNumber'].unique():
     orbitNNow = test_data['OrbitNumber'] == k
     errorbar(test_data['DeltaPhase'][orbitNNow]    ,              test_data['Flux'][orbitNNow]          ,              test_data['Sigma'][orbitNNow], fmt='o')
 
 
-# In[5]:
+# In[ ]:
 
 def zhou_model(params):
     # Zhou et al. 2017
@@ -100,7 +100,7 @@ def zhou_model(params):
 
 # # PyMultiNest Demo
 
-# In[6]:
+# In[ ]:
 
 from __future__ import absolute_import, unicode_literals, print_function
 import pymultinest
@@ -113,7 +113,7 @@ if not os.path.exists("chains"): os.mkdir("chains")
     
 
 
-# In[7]:
+# In[ ]:
 
 get_ipython().magic('matplotlib inline')
 from pylab import *;ion()
@@ -150,7 +150,7 @@ def sine_wave(cube):
 
 # ** Generate Fake Data for Algorithm Testing **
 
-# In[8]:
+# In[ ]:
 
 np.random.seed(0)
 
@@ -187,7 +187,7 @@ errorbar(xdata_test, zdata_test, yunc_test*ones(zdata_test.size), fmt='o')
 
 # # Single Exponential Model
 
-# In[9]:
+# In[ ]:
 
 nThPts    = int(1e3)
 model_SEM = single_exponential_model
@@ -211,7 +211,7 @@ plot(thdata_SEM, model_SEM([param0_SEM_init,param1_SEM_init,param2_SEM_init])(th
 errorbar(xdata, ydata, yuncs, fmt='o')
 
 
-# In[10]:
+# In[ ]:
 
 # our probability functions
 # Taken from the eggbox problem.
@@ -240,7 +240,9 @@ def myloglike_SEM(cube, ndim, nparams):
     return -0.5*((modelNow - ydata)**2. / yuncs**2.).sum()
 
 
-# In[11]:
+# In[ ]:
+
+if not os.path.exists("chains"): os.mkdir("chains")
 
 # number of dimensions our problem has
 # parameters = ["x", "y"]
@@ -268,7 +270,7 @@ a_SEM = pymultinest.Analyzer(n_params = n_params_SEM, outputfiles_basename=outpu
 s_SEM = a_SEM.get_stats();
 
 
-# In[12]:
+# In[ ]:
 
 import json
 
@@ -285,7 +287,7 @@ print("Global Evidence:\t%.15e +- %.15e" % ( s_SEM['nested sampling global log-e
 print("Global Evidence:\t%.3f +- %.3f" % ( s_SEM['nested sampling global log-evidence'],                                              s_SEM['nested sampling global log-evidence error'] ))
 
 
-# In[13]:
+# In[ ]:
 
 import matplotlib.pyplot as plt
 plt.clf()
@@ -316,7 +318,7 @@ for i in range(n_params_SEM):
 # show("chains/marginals_multinest.pdf")
 
 
-# In[14]:
+# In[ ]:
 
 # plt.figure(figsize=(5*n_params, 5*n_params))
 # plt.subplot2grid((5*n_params, 5*n_params), loc=(0,0))
@@ -337,12 +339,12 @@ for i in range(n_params_SEM):
     # plt.close()
 
 
-# In[15]:
+# In[ ]:
 
 p_SEM.analyser.get_best_fit()['parameters'], [param0_SEM_init, param1_SEM_init, param2_SEM_init]
 
 
-# In[16]:
+# In[ ]:
 
 figure(figsize=(10,10))
 plot(thdata_SEM, model_SEM([param0_SEM_init,param1_SEM_init, param2_SEM_init])(thdata_SEM), label='Initial Model')
@@ -351,14 +353,14 @@ plot(thdata_SEM, model_SEM(p_SEM.analyser.get_best_fit()['parameters'])(thdata_S
 legend(loc=0)
 
 
-# In[17]:
+# In[ ]:
 
 p_SEM.analyser.get_stats()
 
 
 # # Unrestricted Double Exponential Model
 
-# In[18]:
+# In[ ]:
 
 nThPts= int(1e3)
 model_UDEM = double_exponential_model
@@ -384,7 +386,7 @@ plot(thdata_UDEM, model_UDEM([param0_UDEM_init,param1_UDEM_init,param2_UDEM_init
 errorbar(xdata, ydata, yuncs, fmt='o')
 
 
-# In[19]:
+# In[ ]:
 
 # our probability functions
 # Taken from the eggbox problem.
@@ -416,7 +418,9 @@ def myloglike_UDEM(cube, ndim, nparams):
     return -0.5*((modelNow - ydata)**2. / yuncs**2.).sum()
 
 
-# In[20]:
+# In[ ]:
+
+if not os.path.exists("chains"): os.mkdir("chains")
 
 start = time()
 # number of dimensions our problem has
@@ -454,7 +458,7 @@ print('UDEM took', time() - start, 'seconds')
 #     # ax.set_yscale("log", nonposy='clip')
 
 
-# In[21]:
+# In[ ]:
 
 import json
 
@@ -470,7 +474,7 @@ print("-" * 30, 'ANALYSIS', "-" * 30)
 print("Global Evidence:\t%.15e +- %.15e" % ( s_UDEM['nested sampling global log-evidence'],                                                s_UDEM['nested sampling global log-evidence error'] ))
 
 
-# In[22]:
+# In[ ]:
 
 import matplotlib.pyplot as plt
 plt.clf()
@@ -501,27 +505,27 @@ for i in range(n_params_UDEM):
 # show("chains/marginals_multinest.pdf")
 
 
-# In[23]:
+# In[ ]:
 
 axes_colors = rcParams['axes.prop_cycle'].by_key()['color']
 nColors     = len(axes_colors)
 
 
-# In[24]:
+# In[ ]:
 
 minLogE, maxLogE = min(a_UDEM.get_equal_weighted_posterior().T[-1]), max(a_UDEM.get_equal_weighted_posterior().T[-1])
 rangeLogE        = maxLogE - minLogE
 minLogE, maxLogE, rangeLogE, nColors
 
 
-# In[25]:
+# In[ ]:
 
 from astroML.plotting import hist
 from statsmodels.robust import scale
 hist(a_UDEM.get_equal_weighted_posterior().T[-1], bins='blocks')
 
 
-# In[26]:
+# In[ ]:
 
 nSig      = 10
 mad_logE  = scale.mad(a_UDEM.get_equal_weighted_posterior().T[-1])
@@ -653,6 +657,8 @@ def myloglike_RDEM(cube, ndim, nparams):
 
 
 # In[ ]:
+
+if not os.path.exists("chains"): os.mkdir("chains")
 
 start = time()
 # number of dimensions our problem has
@@ -951,6 +957,8 @@ def myloglike_Poly(cube, ndim, nparams):
 
 
 # In[ ]:
+
+if not os.path.exists("chains"): os.mkdir("chains")
 
 start = time()
 # number of dimensions our problem has
